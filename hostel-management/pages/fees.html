@@ -1,157 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fees — HostelOS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css"/>
+<title>Fees</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
-  <aside class="sidebar">
-    <div class="sidebar-logo"><span class="logo-icon">⬡</span><span class="logo-text">HostelOS</span></div>
-    <nav class="sidebar-nav">
-      <a href="../index.html" class="nav-item"><span class="nav-icon">◈</span> Dashboard</a>
-      <a href="students.html" class="nav-item"><span class="nav-icon">◉</span> Students</a>
-      <a href="rooms.html" class="nav-item"><span class="nav-icon">▣</span> Rooms</a>
-      <a href="fees.html" class="nav-item active"><span class="nav-icon">◎</span> Fees</a>
-      <a href="maintenance.html" class="nav-item"><span class="nav-icon">⚙</span> Maintenance</a>
-      <a href="visitors.html" class="nav-item"><span class="nav-icon">◌</span> Visitors</a>
-    </nav>
-    <div class="sidebar-footer"><div class="admin-badge"><span class="admin-dot"></span><span>Admin Online</span></div></div>
-  </aside>
 
-  <main class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <h1 class="page-title">Fees</h1>
-        <span class="page-sub">Payment tracking</span>
-      </div>
-      <div class="topbar-right">
-        <select id="filterStatus" class="search-input" onchange="renderTable()" style="width:160px">
-          <option value="">All Records</option>
-          <option value="Paid">Paid</option>
-          <option value="Pending">Pending</option>
-        </select>
-        <button class="btn-primary" onclick="showModal('addFeeModal')">+ Add Record</button>
-      </div>
-    </header>
+<div class="sidebar">
 
-    <!-- Summary Cards -->
-    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
-      <div class="stat-card" style="--accent:#00d4aa">
-        <div class="stat-label">Total Collected</div>
-        <div class="stat-value" id="totalPaid" style="font-size:24px">₹0</div>
-      </div>
-      <div class="stat-card" style="--accent:#ef476f">
-        <div class="stat-label">Pending Amount</div>
-        <div class="stat-value" id="totalPending" style="font-size:24px">₹0</div>
-      </div>
-      <div class="stat-card" style="--accent:#ffd166">
-        <div class="stat-label">Total Records</div>
-        <div class="stat-value" id="totalRecords" style="font-size:24px">0</div>
-      </div>
-    </div>
+<h2>Hostel Admin</h2>
 
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr><th>Fee ID</th><th>Student</th><th>Amount</th><th>Payment Date</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-  </main>
+<a href="../index.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user"></i> Students</a>
+<a href="rooms.html"><i class="fa fa-bed"></i> Rooms</a>
+<a href="maintenance.html"><i class="fa fa-wrench"></i> Maintenance</a>
+<a href="visitors.html"><i class="fa fa-users"></i> Visitors</a>
+<a href="fees.html"><i class="fa fa-money-bill"></i> Fees</a>
 
-  <div class="modal-overlay" id="addFeeModal">
-    <div class="modal">
-      <div class="modal-header"><h3>Add Fee Record</h3><button class="modal-close" onclick="closeModal('addFeeModal')">✕</button></div>
-      <div class="modal-body">
-        <div class="form-group"><label>Student</label>
-          <select id="fStudent"></select>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Amount (₹)</label><input type="number" id="fAmount" placeholder="e.g. 5000"/></div>
-          <div class="form-group"><label>Payment Date</label><input type="date" id="fDate"/></div>
-        </div>
-        <div class="form-group"><label>Status</label>
-          <select id="fStatus"><option>Paid</option><option>Pending</option></select>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-ghost" onclick="closeModal('addFeeModal')">Cancel</button>
-        <button class="btn-primary" onclick="addFee()">Add Record</button>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
-  <script>
-    function populateStudentSelect(selId, currentVal) {
-      const sel = document.getElementById(selId);
-      sel.innerHTML = DB.students.map(s => `<option value="${s.id}" ${s.id==currentVal?'selected':''}>${s.name}</option>`).join('');
-    }
+<div class="main">
 
-    function renderSummary() {
-      const paid = DB.fees.filter(f => f.status === 'Paid').reduce((a,f) => a+f.amount,0);
-      const pending = DB.fees.filter(f => f.status === 'Pending').reduce((a,f) => a+f.amount,0);
-      document.getElementById('totalPaid').textContent = '₹' + paid.toLocaleString('en-IN');
-      document.getElementById('totalPending').textContent = '₹' + pending.toLocaleString('en-IN');
-      document.getElementById('totalRecords').textContent = DB.fees.length;
-    }
+<h1>Fee Management</h1>
 
-    function renderTable() {
-      const filter = document.getElementById('filterStatus').value;
-      const rows = DB.fees.filter(f => !filter || f.status === filter);
-      const tbody = document.getElementById('tableBody');
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">◎</div>No records found</div></td></tr>`;
-        return;
-      }
-      tbody.innerHTML = rows.map(f => {
-        const cls = f.status === 'Paid' ? 'badge-green' : 'badge-red';
-        return `<tr>
-          <td><span class="badge badge-gray">#${f.id}</span></td>
-          <td>${DB.getStudentName(f.studentId)}</td>
-          <td style="font-family:var(--font-mono)">₹${f.amount.toLocaleString('en-IN')}</td>
-          <td style="font-family:var(--font-mono);font-size:12px">${f.paymentDate}</td>
-          <td><span class="badge ${cls}">${f.status}</span></td>
-          <td><div class="action-cell">
-            ${f.status === 'Pending' ? `<button class="btn-sm" onclick="markPaid(${f.id})" style="color:var(--accent2);border-color:var(--accent2)">Mark Paid</button>` : ''}
-            <button class="btn-danger" onclick="deleteFee(${f.id})">Delete</button>
-          </div></td>
-        </tr>`;
-      }).join('');
-    }
+<table>
 
-    function addFee() {
-      const studentId = parseInt(document.getElementById('fStudent').value);
-      const amount = parseInt(document.getElementById('fAmount').value);
-      const paymentDate = document.getElementById('fDate').value;
-      const status = document.getElementById('fStatus').value;
-      if (!amount || !paymentDate) { toast('Fill all fields','error'); return; }
-      DB.fees.push({ id: DB.nextId(DB.fees), studentId, amount, paymentDate, status });
-      DB.save(); closeModal('addFeeModal'); toast('Fee record added!'); renderTable(); renderSummary();
-    }
+<tr>
+<th>Student ID</th>
+<th>Name</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Payment Date</th>
+</tr>
 
-    function markPaid(id) {
-      const f = DB.fees.find(x => x.id === id);
-      f.status = 'Paid';
-      f.paymentDate = new Date().toISOString().split('T')[0];
-      DB.save(); toast('Marked as paid!'); renderTable(); renderSummary();
-    }
+<tr>
+<td>101</td>
+<td>Rahul</td>
+<td>₹5000</td>
+<td class="status-paid">Paid</td>
+<td>01-03-2026</td>
+</tr>
 
-    function deleteFee(id) {
-      if (!confirm('Delete this fee record?')) return;
-      DB.fees = DB.fees.filter(f => f.id !== id);
-      DB.save(); toast('Record deleted'); renderTable(); renderSummary();
-    }
+<tr>
+<td>102</td>
+<td>Arjun</td>
+<td>₹5000</td>
+<td class="status-pending">Pending</td>
+<td>-</td>
+</tr>
 
-    populateStudentSelect('fStudent');
-    renderTable();
-    renderSummary();
-  </script>
+</table>
+
+</div>
+
 </body>
 </html>

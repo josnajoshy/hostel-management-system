@@ -1,125 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Maintenance — HostelOS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css"/>
+<title>Maintenance</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
-  <aside class="sidebar">
-    <div class="sidebar-logo"><span class="logo-icon">⬡</span><span class="logo-text">HostelOS</span></div>
-    <nav class="sidebar-nav">
-      <a href="../index.html" class="nav-item"><span class="nav-icon">◈</span> Dashboard</a>
-      <a href="students.html" class="nav-item"><span class="nav-icon">◉</span> Students</a>
-      <a href="rooms.html" class="nav-item"><span class="nav-icon">▣</span> Rooms</a>
-      <a href="fees.html" class="nav-item"><span class="nav-icon">◎</span> Fees</a>
-      <a href="maintenance.html" class="nav-item active"><span class="nav-icon">⚙</span> Maintenance</a>
-      <a href="visitors.html" class="nav-item"><span class="nav-icon">◌</span> Visitors</a>
-    </nav>
-    <div class="sidebar-footer"><div class="admin-badge"><span class="admin-dot"></span><span>Admin Online</span></div></div>
-  </aside>
 
-  <main class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <h1 class="page-title">Maintenance</h1>
-        <span class="page-sub">Repair & request tracking</span>
-      </div>
-      <div class="topbar-right">
-        <select id="filterStatus" class="search-input" onchange="renderTable()" style="width:160px">
-          <option value="">All Requests</option>
-          <option value="Pending">Pending</option>
-          <option value="Completed">Completed</option>
-        </select>
-        <button class="btn-primary" onclick="showModal('addModal')">+ New Request</button>
-      </div>
-    </header>
+<div class="sidebar">
 
-    <div class="table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr><th>Request ID</th><th>Room</th><th>Issue</th><th>Date</th><th>Status</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
-  </main>
+<h2>Hostel Admin</h2>
 
-  <div class="modal-overlay" id="addModal">
-    <div class="modal">
-      <div class="modal-header"><h3>New Maintenance Request</h3><button class="modal-close" onclick="closeModal('addModal')">✕</button></div>
-      <div class="modal-body">
-        <div class="form-row">
-          <div class="form-group"><label>Room ID</label><input type="number" id="mRoom" placeholder="Room number"/></div>
-          <div class="form-group"><label>Request Date</label><input type="date" id="mDate"/></div>
-        </div>
-        <div class="form-group"><label>Issue Description</label>
-          <textarea id="mIssue" placeholder="Describe the issue..."></textarea>
-        </div>
-        <div class="form-group"><label>Status</label>
-          <select id="mStatus"><option>Pending</option><option>Completed</option></select>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-ghost" onclick="closeModal('addModal')">Cancel</button>
-        <button class="btn-primary" onclick="addRequest()">Submit Request</button>
-      </div>
-    </div>
-  </div>
+<a href="../index.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user"></i> Students</a>
+<a href="rooms.html"><i class="fa fa-bed"></i> Rooms</a>
+<a href="maintenance.html"><i class="fa fa-wrench"></i> Maintenance</a>
+<a href="visitors.html"><i class="fa fa-users"></i> Visitors</a>
+<a href="fees.html"><i class="fa fa-money-bill"></i> Fees</a>
 
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
-  <script>
-    function renderTable() {
-      const filter = document.getElementById('filterStatus').value;
-      const rows = DB.maintenance.filter(m => !filter || m.status === filter);
-      const tbody = document.getElementById('tableBody');
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">⚙</div>No requests found</div></td></tr>`;
-        return;
-      }
-      tbody.innerHTML = rows.map(m => {
-        const cls = m.status === 'Completed' ? 'badge-green' : 'badge-yellow';
-        return `<tr>
-          <td><span class="badge badge-gray">#${m.id}</span></td>
-          <td>Room ${m.roomId}</td>
-          <td>${m.issue}</td>
-          <td style="font-family:var(--font-mono);font-size:12px">${m.requestDate}</td>
-          <td><span class="badge ${cls}">${m.status}</span></td>
-          <td><div class="action-cell">
-            ${m.status === 'Pending' ? `<button class="btn-sm" onclick="markDone(${m.id})" style="color:var(--accent2);border-color:var(--accent2)">Mark Done</button>` : ''}
-            <button class="btn-danger" onclick="deleteReq(${m.id})">Delete</button>
-          </div></td>
-        </tr>`;
-      }).join('');
-    }
+</div>
 
-    function addRequest() {
-      const roomId = parseInt(document.getElementById('mRoom').value);
-      const issue = document.getElementById('mIssue').value.trim();
-      const requestDate = document.getElementById('mDate').value;
-      const status = document.getElementById('mStatus').value;
-      if (!roomId || !issue || !requestDate) { toast('Fill all fields','error'); return; }
-      DB.maintenance.push({ id: DB.nextId(DB.maintenance), roomId, issue, requestDate, status });
-      DB.save(); closeModal('addModal'); toast('Request submitted!'); renderTable();
-      ['mRoom','mIssue','mDate'].forEach(id => document.getElementById(id).value = '');
-    }
+<div class="main">
 
-    function markDone(id) {
-      DB.maintenance.find(x => x.id === id).status = 'Completed';
-      DB.save(); toast('Marked as completed!'); renderTable();
-    }
+<h1>Maintenance Requests</h1>
 
-    function deleteReq(id) {
-      if (!confirm('Delete this request?')) return;
-      DB.maintenance = DB.maintenance.filter(m => m.id !== id);
-      DB.save(); toast('Request deleted'); renderTable();
-    }
+<table>
 
-    renderTable();
-  </script>
+<tr>
+<th>Request ID</th>
+<th>Room</th>
+<th>Issue</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>1</td>
+<td>101</td>
+<td>Fan not working</td>
+<td>10-03-2026</td>
+<td>Pending</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>204</td>
+<td>Water leakage</td>
+<td>09-03-2026</td>
+<td>In Progress</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>110</td>
+<td>Light not working</td>
+<td>08-03-2026</td>
+<td>Completed</td>
+</tr>
+
+</table>
+
+</div>
+
 </body>
 </html>

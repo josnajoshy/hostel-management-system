@@ -1,318 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Students — HostelOS</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="../css/style.css"/>
+<title>Students</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
+<div class="sidebar">
 
-<aside class="sidebar">
-<div class="sidebar-logo">
-<span class="logo-icon">⬡</span>
-<span class="logo-text">HostelOS</span>
+<h2>Hostel Admin</h2>
+
+<a href="../index.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user"></i> Students</a>
+<a href="rooms.html"><i class="fa fa-bed"></i> Rooms</a>
+<a href="maintenance.html"><i class="fa fa-wrench"></i> Maintenance</a>
+<a href="visitors.html"><i class="fa fa-users"></i> Visitors</a>
+<a href="fees.html"><i class="fa fa-money-bill"></i> Fees</a>
+
 </div>
 
-<nav class="sidebar-nav">
-<a href="../index.html" class="nav-item"><span class="nav-icon">◈</span> Dashboard</a>
-<a href="students.html" class="nav-item active"><span class="nav-icon">◉</span> Students</a>
-<a href="rooms.html" class="nav-item"><span class="nav-icon">▣</span> Rooms</a>
-<a href="fees.html" class="nav-item"><span class="nav-icon">◎</span> Fees</a>
-<a href="maintenance.html" class="nav-item"><span class="nav-icon">⚙</span> Maintenance</a>
-<a href="visitors.html" class="nav-item"><span class="nav-icon">◌</span> Visitors</a>
-</nav>
+<div class="main">
 
-<div class="sidebar-footer">
-<div class="admin-badge">
-<span class="admin-dot"></span>
-<span>Admin Online</span>
-</div>
-</div>
+<h1>Students</h1>
 
-</aside>
+<input type="text" id="searchInput" placeholder="Search student..." onkeyup="searchStudent()">
 
-<!-- MAIN -->
+<table id="studentTable">
 
-<main class="main">
-
-<header class="topbar">
-
-<div class="topbar-left">
-<h1 class="page-title">Students</h1>
-<span class="page-sub">All registered residents</span>
-</div>
-
-<div class="topbar-right">
-<input type="text"
-class="search-input"
-id="searchInput"
-placeholder="Search students..."
-oninput="renderTable()"
-/>
-
-<button class="btn-primary" onclick="showModal('addStudentModal')">
-+ Add Student
-</button>
-</div>
-
-</header>
-
-<div class="table-wrap">
-
-<table class="data-table">
-
-<thead>
 <tr>
 <th>ID</th>
 <th>Name</th>
 <th>Department</th>
-<th>Phone</th>
 <th>Room</th>
-<th>Join Date</th>
-<th>Actions</th>
 </tr>
-</thead>
-
-<tbody id="tableBody"></tbody>
 
 </table>
 
 </div>
 
-</main>
-
-
-<!-- ADD STUDENT MODAL -->
-
-<div class="modal-overlay" id="addStudentModal">
-
-<div class="modal">
-
-<div class="modal-header">
-<h3>Register Student</h3>
-<button class="modal-close" onclick="closeModal('addStudentModal')">✕</button>
-</div>
-
-<div class="modal-body">
-
-<div class="form-row">
-
-<div class="form-group">
-<label>Full Name</label>
-<input type="text" id="sName"/>
-</div>
-
-<div class="form-group">
-<label>Department</label>
-<input type="text" id="sDept"/>
-</div>
-
-</div>
-
-<div class="form-row">
-
-<div class="form-group">
-<label>Phone</label>
-<input type="text" id="sPhone"/>
-</div>
-
-<div class="form-group">
-<label>Room ID</label>
-<input type="number" id="sRoom"/>
-</div>
-
-</div>
-
-<div class="form-group">
-<label>Join Date</label>
-<input type="date" id="sJoinDate"/>
-</div>
-
-</div>
-
-<div class="modal-footer">
-
-<button class="btn-ghost" onclick="closeModal('addStudentModal')">
-Cancel
-</button>
-
-<button class="btn-primary" onclick="addStudent()">
-Register
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
+<script src="../js/data.js"></script>
 <script src="../js/app.js"></script>
 
 <script>
-
-let students = [];
-
-
-async function loadStudents(){
-
-const res = await fetch("/students");
-
-students = await res.json();
-
-renderTable();
-
-}
-
-
-function renderTable(){
-
-const q = document.getElementById("searchInput").value.toLowerCase();
-
-const rows = students.filter(s =>
-s.name.toLowerCase().includes(q) ||
-s.dept.toLowerCase().includes(q) ||
-String(s.room_id).includes(q)
-);
-
-const tbody = document.getElementById("tableBody");
-
-if(rows.length === 0){
-
-tbody.innerHTML =
-`<tr>
-<td colspan="7">
-<div class="empty-state">
-<div class="empty-icon">◉</div>
-No students found
-</div>
-</td>
-</tr>`;
-
-return;
-
-}
-
-
-tbody.innerHTML = rows.map(s => `
-<tr>
-
-<td>
-<span class="badge badge-gray">#${s.student_id}</span>
-</td>
-
-<td>
-<strong>${s.name}</strong>
-</td>
-
-<td>
-<span class="badge badge-blue">${s.dept}</span>
-</td>
-
-<td style="font-family:var(--font-mono);font-size:12px">
-${s.phone}
-</td>
-
-<td>
-${s.room_id}
-</td>
-
-<td style="font-family:var(--font-mono);font-size:12px">
-${s.join_date}
-</td>
-
-<td>
-
-<div class="action-cell">
-
-<button class="btn-danger"
-onclick="deleteStudent(${s.student_id})">
-Delete
-</button>
-
-</div>
-
-</td>
-
-</tr>
-`).join("");
-
-}
-
-
-async function addStudent(){
-
-const name = document.getElementById("sName").value.trim();
-const dept = document.getElementById("sDept").value.trim();
-const phone = document.getElementById("sPhone").value.trim();
-const room_id = document.getElementById("sRoom").value;
-const join_date = document.getElementById("sJoinDate").value;
-
-if(!name || !dept || !phone || !room_id || !join_date){
-
-toast("Fill all fields","error");
-
-return;
-
-}
-
-
-await fetch("/students",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-name,
-dept,
-phone,
-room_id,
-join_date
-})
-
-});
-
-
-closeModal("addStudentModal");
-
 loadStudents();
-
-toast("Student added!");
-
-}
-
-
-async function deleteStudent(id){
-
-if(!confirm("Delete this student?")) return;
-
-await fetch(`/students/${id}`,{
-
-method:"DELETE"
-
-});
-
-
-loadStudents();
-
-toast("Student deleted");
-
-}
-
-
-window.onload = loadStudents;
-
 </script>
 
 </body>
