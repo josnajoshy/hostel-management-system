@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Students — HostelOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">HostelOS</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="nav-item"><span class="nav-icon">◈</span> Dashboard</a>
+      <a href="students.html" class="nav-item active"><span class="nav-icon">◉</span> Students</a>
+      <a href="rooms.html" class="nav-item"><span class="nav-icon">▣</span> Rooms</a>
+      <a href="fees.html" class="nav-item"><span class="nav-icon">◎</span> Fees</a>
+      <a href="maintenance.html" class="nav-item"><span class="nav-icon">⚙</span> Maintenance</a>
+      <a href="visitors.html" class="nav-item"><span class="nav-icon">◌</span> Visitors</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-badge"><span class="admin-dot"></span><span>Admin Online</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Students</h1>
+        <span class="page-sub">All registered residents</span>
+      </div>
+      <div class="topbar-right">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search students..." oninput="renderTable()"/>
+        <button class="btn-primary" onclick="showModal('addStudentModal')">+ Add Student</button>
+      </div>
+    </header>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Department</th><th>Phone</th><th>Room</th><th>Join Date</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Add Modal -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Register Student</h3>
+        <button class="modal-close" onclick="closeModal('addStudentModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="sName" placeholder="Name"/></div>
+          <div class="form-group"><label>Department</label><input type="text" id="sDept" placeholder="e.g. CSE"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone</label><input type="text" id="sPhone" placeholder="10-digit"/></div>
+          <div class="form-group"><label>Room ID</label><input type="number" id="sRoom" placeholder="Room no."/></div>
+        </div>
+        <div class="form-group"><label>Join Date</label><input type="date" id="sJoinDate"/></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('addStudentModal')">Cancel</button>
+        <button class="btn-primary" onclick="addStudent()">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Student</h3>
+        <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="eId"/>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name</label><input type="text" id="eName"/></div>
+          <div class="form-group"><label>Department</label><input type="text" id="eDept"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone</label><input type="text" id="ePhone"/></div>
+          <div class="form-group"><label>Room ID</label><input type="number" id="eRoom"/></div>
+        </div>
+        <div class="form-group"><label>Join Date</label><input type="date" id="eJoinDate"/></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('editModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    function renderTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const rows = DB.students.filter(s =>
+        s.name.toLowerCase().includes(q) || s.dept.toLowerCase().includes(q) || String(s.roomId).includes(q)
+      );
+      const tbody = document.getElementById('tableBody');
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">◉</div>No students found</div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = rows.map(s => `
+        <tr>
+          <td><span class="badge badge-gray">#${s.id}</span></td>
+          <td><strong>${s.name}</strong></td>
+          <td><span class="badge badge-blue">${s.dept}</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">${s.phone}</td>
+          <td>${s.roomId}</td>
+          <td style="font-family:var(--font-mono);font-size:12px">${s.joinDate}</td>
+          <td>
+            <div class="action-cell">
+              <button class="btn-sm" onclick="openEdit(${s.id})">Edit</button>
+              <button class="btn-danger" onclick="deleteStudent(${s.id})">Delete</button>
+            </div>
+          </td>
+        </tr>`).join('');
+    }
+
+    function addStudent() {
+      const name = document.getElementById('sName').value.trim();
+      const dept = document.getElementById('sDept').value.trim();
+      const phone = document.getElementById('sPhone').value.trim();
+      const roomId = parseInt(document.getElementById('sRoom').value);
+      const joinDate = document.getElementById('sJoinDate').value;
+      if (!name || !dept || !phone || !roomId || !joinDate) { toast('Fill all fields','error'); return; }
+      DB.students.push({ id: DB.nextId(DB.students), name, dept, phone, roomId, joinDate });
+      DB.save();
+      closeModal('addStudentModal');
+      toast('Student added!');
+      renderTable();
+      ['sName','sDept','sPhone','sRoom','sJoinDate'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function openEdit(id) {
+      const s = DB.students.find(x => x.id === id);
+      document.getElementById('eId').value = s.id;
+      document.getElementById('eName').value = s.name;
+      document.getElementById('eDept').value = s.dept;
+      document.getElementById('ePhone').value = s.phone;
+      document.getElementById('eRoom').value = s.roomId;
+      document.getElementById('eJoinDate').value = s.joinDate;
+      showModal('editModal');
+    }
+
+    function saveEdit() {
+      const id = parseInt(document.getElementById('eId').value);
+      const s = DB.students.find(x => x.id === id);
+      s.name = document.getElementById('eName').value.trim();
+      s.dept = document.getElementById('eDept').value.trim();
+      s.phone = document.getElementById('ePhone').value.trim();
+      s.roomId = parseInt(document.getElementById('eRoom').value);
+      s.joinDate = document.getElementById('eJoinDate').value;
+      DB.save();
+      closeModal('editModal');
+      toast('Student updated!');
+      renderTable();
+    }
+
+    function deleteStudent(id) {
+      if (!confirm('Delete this student?')) return;
+      DB.students = DB.students.filter(s => s.id !== id);
+      DB.save();
+      toast('Student deleted');
+      renderTable();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

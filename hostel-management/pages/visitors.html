@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Visitors — HostelOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="logo-icon">⬡</span><span class="logo-text">HostelOS</span></div>
+    <nav class="sidebar-nav">
+      <a href="../index.html" class="nav-item"><span class="nav-icon">◈</span> Dashboard</a>
+      <a href="students.html" class="nav-item"><span class="nav-icon">◉</span> Students</a>
+      <a href="rooms.html" class="nav-item"><span class="nav-icon">▣</span> Rooms</a>
+      <a href="fees.html" class="nav-item"><span class="nav-icon">◎</span> Fees</a>
+      <a href="maintenance.html" class="nav-item"><span class="nav-icon">⚙</span> Maintenance</a>
+      <a href="visitors.html" class="nav-item active"><span class="nav-icon">◌</span> Visitors</a>
+    </nav>
+    <div class="sidebar-footer"><div class="admin-badge"><span class="admin-dot"></span><span>Admin Online</span></div></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 class="page-title">Visitors</h1>
+        <span class="page-sub">Guest & visitor log</span>
+      </div>
+      <div class="topbar-right">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search visitors..." oninput="renderTable()"/>
+        <button class="btn-primary" onclick="showModal('addModal')">+ Log Visitor</button>
+      </div>
+    </header>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr><th>ID</th><th>Visitor Name</th><th>Student</th><th>Visit Date</th><th>Relation</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header"><h3>Log Visitor</h3><button class="modal-close" onclick="closeModal('addModal')">✕</button></div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Visitor Name</label><input type="text" id="vName" placeholder="Full name"/></div>
+          <div class="form-group"><label>Relation</label><input type="text" id="vRelation" placeholder="e.g. Father"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Visiting Student</label>
+            <select id="vStudent"></select>
+          </div>
+          <div class="form-group"><label>Visit Date</label><input type="date" id="vDate"/></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal('addModal')">Cancel</button>
+        <button class="btn-primary" onclick="addVisitor()">Log Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    function populateStudents() {
+      document.getElementById('vStudent').innerHTML = DB.students.map(s =>
+        `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+
+    function renderTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const rows = DB.visitors.filter(v =>
+        v.visitorName.toLowerCase().includes(q) || v.relation.toLowerCase().includes(q) ||
+        DB.getStudentName(v.studentId).toLowerCase().includes(q)
+      );
+      const tbody = document.getElementById('tableBody');
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">◌</div>No visitors found</div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = rows.map(v => `
+        <tr>
+          <td><span class="badge badge-gray">#${v.id}</span></td>
+          <td><strong>${v.visitorName}</strong></td>
+          <td>${DB.getStudentName(v.studentId)}</td>
+          <td style="font-family:var(--font-mono);font-size:12px">${v.visitDate}</td>
+          <td><span class="badge badge-blue">${v.relation}</span></td>
+          <td><button class="btn-danger" onclick="deleteVisitor(${v.id})">Delete</button></td>
+        </tr>`).join('');
+    }
+
+    function addVisitor() {
+      const visitorName = document.getElementById('vName').value.trim();
+      const relation = document.getElementById('vRelation').value.trim();
+      const studentId = parseInt(document.getElementById('vStudent').value);
+      const visitDate = document.getElementById('vDate').value;
+      if (!visitorName || !relation || !visitDate) { toast('Fill all fields','error'); return; }
+      DB.visitors.push({ id: DB.nextId(DB.visitors), visitorName, studentId, visitDate, relation });
+      DB.save(); closeModal('addModal'); toast('Visitor logged!'); renderTable();
+      ['vName','vRelation','vDate'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function deleteVisitor(id) {
+      if (!confirm('Delete this visitor record?')) return;
+      DB.visitors = DB.visitors.filter(v => v.id !== id);
+      DB.save(); toast('Record deleted'); renderTable();
+    }
+
+    populateStudents();
+    renderTable();
+  </script>
+</body>
+</html>
