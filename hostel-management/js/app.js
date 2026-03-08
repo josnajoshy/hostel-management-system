@@ -2,82 +2,97 @@
 
 // ---- Utilities ----
 function showModal(id) {
-  document.getElementById(id).classList.add('active');
+  document.getElementById(id).classList.add("active");
 }
+
 function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
+  document.getElementById(id).classList.remove("active");
 }
-function toast(msg, type = 'success') {
-  let container = document.querySelector('.toast-container');
+
+function toast(msg, type = "success") {
+  let container = document.querySelector(".toast-container");
+
   if (!container) {
-    container = document.createElement('div');
-    container.className = 'toast-container';
+    container = document.createElement("div");
+    container.className = "toast-container";
     document.body.appendChild(container);
   }
-  const t = document.createElement('div');
-  t.className = 'toast' + (type === 'error' ? ' error' : '');
+
+  const t = document.createElement("div");
+  t.className = "toast" + (type === "error" ? " error" : "");
   t.textContent = msg;
+
   container.appendChild(t);
+
   setTimeout(() => t.remove(), 3000);
 }
 
-// Close modal on overlay click
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal-overlay')) {
-    e.target.classList.remove('active');
+
+// Close modal when clicking outside
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("modal-overlay")) {
+    e.target.classList.remove("active");
   }
 });
 
-// Set date badge
-const dateBadge = document.getElementById('dateBadge');
+
+// Date badge
+const dateBadge = document.getElementById("dateBadge");
 if (dateBadge) {
-  dateBadge.textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  dateBadge.textContent = new Date().toLocaleDateString("en-IN", {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
 }
 
-// ---- DASHBOARD ----
+
+// ===== DASHBOARD =====
 async function renderDashboard() {
 
   try {
 
-    const studentsRes = await fetch("http://localhost:5000/students");
-    const students = await studentsRes.json();
-
-    const roomsRes = await fetch("http://localhost:5000/rooms");
-    const rooms = await roomsRes.json();
-
-    const feesRes = await fetch("http://localhost:5000/fees");
-    const fees = await feesRes.json();
-
-    const maintRes = await fetch("http://localhost:5000/maintenance");
-    const maintenance = await maintRes.json();
+    const students = await fetch("/students").then(r => r.json());
+    const rooms = await fetch("/rooms").then(r => r.json());
+    const fees = await fetch("/fees").then(r => r.json());
+    const maintenance = await fetch("/maintenance").then(r => r.json());
 
 
     // ===== Stats =====
-    document.getElementById('totalStudents').textContent = students.length;
+    const totalStudents = document.getElementById("totalStudents");
+    if (totalStudents) totalStudents.textContent = students.length;
 
-    const occupiedRooms = rooms.filter(r => r.status === 'Occupied').length;
-    document.getElementById('roomsOccupied').textContent =
-      occupiedRooms + "/" + rooms.length;
+    const roomsOccupied = document.getElementById("roomsOccupied");
+    if (roomsOccupied) {
+      const occupied = rooms.filter(r => r.status === "Occupied").length;
+      roomsOccupied.textContent = occupied + "/" + rooms.length;
+    }
 
-    const pendingFeeTotal = fees
-      .filter(f => f.status === 'Pending')
-      .reduce((a, f) => a + f.amount, 0);
+    const pendingFees = document.getElementById("pendingFees");
+    if (pendingFees) {
+      const total = fees
+        .filter(f => f.status === "Pending")
+        .reduce((a, f) => a + f.amount, 0);
 
-    document.getElementById('pendingFees').textContent =
-      '₹' + pendingFeeTotal.toLocaleString('en-IN');
+      pendingFees.textContent = "₹" + total.toLocaleString("en-IN");
+    }
 
-    document.getElementById('pendingMaint').textContent =
-      maintenance.filter(m => m.status === 'Pending').length;
+    const pendingMaint = document.getElementById("pendingMaint");
+    if (pendingMaint) {
+      pendingMaint.textContent =
+        maintenance.filter(m => m.status === "Pending").length;
+    }
 
 
     // ===== Recent Students =====
-    const tbody = document.getElementById('recentStudentsBody');
+    const tbody = document.getElementById("recentStudentsBody");
 
     if (tbody) {
 
-      const recentStudents = students.slice(-4).reverse();
+      const recent = students.slice(-4).reverse();
 
-      tbody.innerHTML = recentStudents.map(s => {
+      tbody.innerHTML = recent.map(s => {
 
         const feeStatus =
           fees.find(f => f.student_id === s.student_id && f.status === "Pending")
@@ -172,14 +187,14 @@ async function renderDashboard() {
         <div class="fee-row">
           <span class="fee-name">Total Collected</span>
           <span class="fee-amount" style="color:#00d4aa">
-            ₹${totalPaid.toLocaleString('en-IN')}
+            ₹${totalPaid.toLocaleString("en-IN")}
           </span>
         </div>
 
         <div class="fee-row">
           <span class="fee-name">Pending Amount</span>
           <span class="fee-amount" style="color:#ef476f">
-            ₹${totalPending.toLocaleString('en-IN')}
+            ₹${totalPending.toLocaleString("en-IN")}
           </span>
         </div>
 
@@ -209,61 +224,33 @@ async function renderDashboard() {
   }
 
 }
-  // Fee overview
-  const feeDiv = document.getElementById('feeOverview');
-  if (feeDiv) {
-    const paid = DB.fees.filter(f => f.status === 'Paid');
-    const pending = DB.fees.filter(f => f.status === 'Pending');
-    const totalPaid = paid.reduce((a, f) => a + f.amount, 0);
-    const totalPending = pending.reduce((a, f) => a + f.amount, 0);
-    feeDiv.innerHTML = `
-      <div class="fee-row">
-        <span class="fee-name">Total Collected</span>
-        <span class="fee-amount" style="color:#00d4aa">₹${totalPaid.toLocaleString('en-IN')}</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-name">Pending Amount</span>
-        <span class="fee-amount" style="color:#ef476f">₹${totalPending.toLocaleString('en-IN')}</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-name">Total Records</span>
-        <span class="fee-amount">${DB.fees.length}</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-name">Paid Records</span>
-        <span class="fee-amount" style="color:#00d4aa">${paid.length}</span>
-      </div>
-      <div class="fee-row">
-        <span class="fee-name">Pending Records</span>
-        <span class="fee-amount" style="color:#ffd166">${pending.length}</span>
-      </div>`;
-  }
-}
 
+
+// ===== ADD STUDENT =====
 async function addStudentFromDash() {
 
-  const name = document.getElementById('sName').value.trim();
-  const dept = document.getElementById('sDept').value.trim();
-  const phone = document.getElementById('sPhone').value.trim();
-  const roomId = parseInt(document.getElementById('sRoom').value);
-  const joinDate = document.getElementById('sJoinDate').value;
+  const name = document.getElementById("sName").value.trim();
+  const dept = document.getElementById("sDept").value.trim();
+  const phone = document.getElementById("sPhone").value.trim();
+  const roomId = parseInt(document.getElementById("sRoom").value);
+  const joinDate = document.getElementById("sJoinDate").value;
 
   if (!name || !dept || !phone || !roomId || !joinDate) {
-    toast('Please fill all fields', 'error');
+    toast("Please fill all fields", "error");
     return;
   }
 
   const student = {
-    name: name,
-    dept: dept,
-    phone: phone,
+    name,
+    dept,
+    phone,
     room_id: roomId,
     join_date: joinDate
   };
 
   try {
 
-    await fetch("http://localhost:5000/students", {
+    await fetch("/students", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -273,10 +260,18 @@ async function addStudentFromDash() {
 
     toast("Student registered successfully!");
 
+    closeModal("addStudentModal");
+
+    renderDashboard();
+
   } catch (error) {
+
     toast("Server error", "error");
+
   }
 
-  closeModal('addStudentModal');
-  renderDashboard();
 }
+
+
+// Load dashboard on page load
+window.onload = renderDashboard;
