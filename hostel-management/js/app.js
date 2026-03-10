@@ -1,14 +1,12 @@
 const API_URL = "http://localhost:5000";
 
-async function loadStudents() {
+/* ================= LOAD STUDENTS ================= */
 
-fetch("http://localhost:5000/students")
-.then(response => response.json())
-.then(students => {
+async function loadStudents() {
 
 let table = document.getElementById("studentTable");
 
-// clear table except header
+/* Reset table header */
 table.innerHTML = `
 <tr>
 <th>ID</th>
@@ -31,11 +29,6 @@ row.insertCell(0).innerHTML = student.student_id;
 row.insertCell(1).innerHTML = student.name;
 row.insertCell(2).innerHTML = student.dept;
 row.insertCell(3).innerHTML = student.room_id;
-<<<<<<< HEAD
-=======
-
-});
->>>>>>> d4d3791113407843a58bdd4388e81899591eb862
 
 });
 
@@ -46,6 +39,8 @@ console.error("Error loading students:", error);
 }
 
 }
+
+/* ================= SEARCH STUDENT ================= */
 
 function searchStudent() {
 
@@ -71,11 +66,18 @@ tr[i].style.display = "none";
 }
 
 }
+
+}
+
+/* ================= SHOW ADD STUDENT FORM ================= */
+
 function showAddStudentForm() {
 
 document.getElementById("studentForm").style.display = "block";
 
 }
+
+/* ================= ADD STUDENT ================= */
 
 async function addStudent() {
 
@@ -95,26 +97,31 @@ join_date
 
 try {
 
-await fetch("http://localhost:5000/students", {
+await fetch(`${API_URL}/students`, {
 
 method: "POST",
+
 headers: {
 "Content-Type": "application/json"
 },
+
 body: JSON.stringify(student)
 
 });
 
-alert("Student Added");
+alert("Student Added Successfully");
 
 loadStudents();
 
 } catch (error) {
 
-console.error(error);
+console.error("Error adding student:", error);
 
 }
 
 }
 
-}
+/* ================= AUTO LOAD DATA ================= */
+
+window.onload = loadStudents;
+

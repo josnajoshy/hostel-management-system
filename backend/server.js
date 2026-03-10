@@ -39,26 +39,25 @@ app.get("/students", (req, res) => {
 });
 
 // Add student
-app.post("/students", (req, res) => {
+app.post("/addStudent",(req,res)=>{
 
-  const { name, dept, phone, room_id, join_date } = req.body;
+const {name,dept,phone,room_id} = req.body;
 
-  const sql = `
-  INSERT INTO students (name, dept, phone, room_id, join_date)
-  VALUES (?, ?, ?, ?, ?)
-  `;
+const sql = "INSERT INTO students (name,dept,phone,room_id,join_date) VALUES (?,?,?,?,CURDATE())";
 
-  db.query(sql, [name, dept, phone, room_id, join_date], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json({ message: "Student Added Successfully" });
-    }
-  });
+db.query(sql,[name,dept,phone,room_id],(err,result)=>{
+
+if(err){
+console.log(err);
+res.send(err);
+}
+else{
+res.json({message:"Student Added"});
+}
 
 });
 
+});
 // Delete student
 app.delete("/students/:id", (req, res) => {
 
