@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <title>Dashboard</title>
+
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -21,35 +26,65 @@
 
 </div>
 
+
 <div class="main">
 
 <h1>Dashboard</h1>
+
+<button onclick="location.href='pages/addStudent.html'" class="add-btn">
+<i class="fa fa-user-plus"></i> Add Student
+</button>
 
 <div class="cards">
 
 <div class="card">
 <h3>Total Students</h3>
-<p>120</p>
+<p id="totalStudents">0</p>
 </div>
 
 <div class="card">
 <h3>Available Rooms</h3>
-<p>35</p>
+<p id="availableRooms">0</p>
 </div>
 
 <div class="card">
 <h3>Pending Maintenance</h3>
-<p>8</p>
+<p id="maintenanceCount">0</p>
 </div>
 
 <div class="card">
 <h3>Fees Pending</h3>
-<p>14</p>
+<p id="feesPending">0</p>
 </div>
 
 </div>
 
 </div>
+
+
+<script>
+
+async function loadDashboard(){
+
+try{
+
+const res = await fetch("http://localhost:5000/students")
+
+const students = await res.json()
+
+document.getElementById("totalStudents").innerText = students.length
+
+}catch(err){
+
+console.log("Error loading dashboard",err)
+
+}
+
+}
+
+loadDashboard()
+
+</script>
 
 </body>
 </html>

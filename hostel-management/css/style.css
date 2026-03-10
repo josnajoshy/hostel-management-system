@@ -17,6 +17,16 @@ color:white;
 text-align:center;
 }
 
+.add-btn{
+background:#007bff;
+color:white;
+border:none;
+padding:10px 15px;
+margin-bottom:10px;
+cursor:pointer;
+border-radius:5px;
+}
+
 .sidebar a{
 display:block;
 color:white;
@@ -120,4 +130,24 @@ font-weight:bold;
 .status-progress{
 color:orange;
 font-weight:bold;
+}
+form{
+max-width:400px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:4px;
+}
+
+.add-btn{
+padding:10px 15px;
+background:#2ecc71;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
 }

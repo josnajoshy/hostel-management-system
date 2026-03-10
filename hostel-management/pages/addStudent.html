@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Add Student</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Hostel Admin</h2>
+
+<a href="../index.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user"></i> Students</a>
+<a href="rooms.html"><i class="fa fa-bed"></i> Rooms</a>
+<a href="maintenance.html"><i class="fa fa-wrench"></i> Maintenance</a>
+<a href="visitors.html"><i class="fa fa-users"></i> Visitors</a>
+<a href="fees.html"><i class="fa fa-money-bill"></i> Fees</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Student</h1>
+
+<form id="studentForm">
+
+<label>Student Name</label>
+<input type="text" id="name" required>
+
+<label>Department</label>
+<input type="text" id="department" required>
+
+<label>Room Number</label>
+<input type="text" id="room" required>
+
+<br><br>
+
+<button type="submit" class="add-btn">
+<i class="fa fa-save"></i> Add Student
+</button>
+
+</form>
+
+</div>
+
+
+<script>
+
+document.getElementById("studentForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+const name = document.getElementById("name").value
+const department = document.getElementById("department").value
+const room = document.getElementById("room").value
+
+await fetch("http://localhost:5000/addStudent",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+name:name,
+department:department,
+room:room
+})
+
+})
+
+alert("Student Added Successfully")
+
+window.location.href="students.html"
+
+})
+
+</script>
+
+</body>
+</html>
