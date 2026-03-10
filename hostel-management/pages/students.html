@@ -63,10 +63,10 @@ students.forEach(student => {
 
 table.innerHTML += `
 <tr>
-<td>${student.id}</td>
+<td>${student.student_id}</td>
 <td>${student.name}</td>
-<td>${student.department}</td>
-<td>${student.room}</td>
+<td>${student.dept}</td>
+<td>${student.room_id}</td>
 </tr>
 `
 
@@ -90,7 +90,7 @@ row.style.display = text.includes(input) ? "" : "none"
 
 }
 
-loadStudents()
+loadStudents();
 
 </script>
 
