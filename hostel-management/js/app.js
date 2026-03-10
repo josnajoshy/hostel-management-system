@@ -2,6 +2,10 @@ const API_URL = "http://localhost:5000";
 
 async function loadStudents() {
 
+fetch("http://localhost:5000/students")
+.then(response => response.json())
+.then(students => {
+
 let table = document.getElementById("studentTable");
 
 // clear table except header
@@ -27,6 +31,11 @@ row.insertCell(0).innerHTML = student.student_id;
 row.insertCell(1).innerHTML = student.name;
 row.insertCell(2).innerHTML = student.dept;
 row.insertCell(3).innerHTML = student.room_id;
+<<<<<<< HEAD
+=======
+
+});
+>>>>>>> d4d3791113407843a58bdd4388e81899591eb862
 
 });
 
