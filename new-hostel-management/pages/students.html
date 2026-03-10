@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Students</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Hostel Admin</h2>
+
+<a href="../index.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user"></i> Students</a>
+<a href="rooms.html"><i class="fa fa-bed"></i> Rooms</a>
+<a href="maintenance.html"><i class="fa fa-wrench"></i> Maintenance</a>
+<a href="visitors.html"><i class="fa fa-users"></i> Visitors</a>
+<a href="fees.html"><i class="fa fa-money-bill"></i> Fees</a>
+
+</div>
+
+<div class="main">
+
+<h1>Students</h1>
+
+<!-- form to add new student -->
+<div class="form-container">
+    <h2>Add Student</h2>
+    <form id="studentForm" onsubmit="event.preventDefault(); addStudent();">
+        <label for="newId">ID:</label>
+        <input type="number" id="newId" required>
+        <label for="newName">Name:</label>
+        <input type="text" id="newName" required>
+        <label for="newDept">Department:</label>
+        <input type="text" id="newDept" required>
+        <label for="newRoom">Room:</label>
+        <input type="number" id="newRoom" required>
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<input type="text" id="searchInput" placeholder="Search student..." onkeyup="searchStudent()">
+
+<table id="studentTable">
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Department</th>
+<th>Room</th>
+<th>Actions</th>
+</tr>
+
+</table>
+
+</div>
+
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+
+<script>
+// render initial list and keep in sync after additions
+renderStudents();
+</script>
+
+</body>
+</html>
