@@ -1,15 +1,21 @@
 function loadStudents() {
 
+fetch("http://localhost:5000/students")
+.then(response => response.json())
+.then(students => {
+
 let table = document.getElementById("studentTable");
 
 students.forEach(student => {
 
 let row = table.insertRow();
 
-row.insertCell(0).innerHTML = student.id;
+row.insertCell(0).innerHTML = student.student_id;
 row.insertCell(1).innerHTML = student.name;
-row.insertCell(2).innerHTML = student.department;
-row.insertCell(3).innerHTML = student.room;
+row.insertCell(2).innerHTML = student.dept;
+row.insertCell(3).innerHTML = student.room_id;
+
+});
 
 });
 
