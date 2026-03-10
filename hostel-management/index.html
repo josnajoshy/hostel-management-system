@@ -50,6 +50,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <div class="card">
 <h3>Pending Maintenance</h3>
 <p id="maintenanceCount">0</p>
+<a href="pages/maintenance.html">View Requests</a>
 </div>
 
 <div class="card">
@@ -68,11 +69,23 @@ async function loadDashboard(){
 
 try{
 
-const res = await fetch("http://localhost:5000/students")
+/* Load students */
 
-const students = await res.json()
+const studentRes = await fetch("http://localhost:5000/students")
+const students = await studentRes.json()
 
 document.getElementById("totalStudents").innerText = students.length
+
+
+/* Load maintenance */
+
+const maintenanceRes = await fetch("http://localhost:5000/maintenance")
+const maintenance = await maintenanceRes.json()
+
+const pending = maintenance.filter(m => m.status === "Pending")
+
+document.getElementById("maintenanceCount").innerText = pending.length
+
 
 }catch(err){
 

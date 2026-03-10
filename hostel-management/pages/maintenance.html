@@ -2,8 +2,12 @@
 <html>
 <head>
 <title>Maintenance</title>
+
 <link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -25,43 +29,61 @@
 
 <h1>Maintenance Requests</h1>
 
-<table>
+<button onclick="location.href='addMaintenance.html'" class="add-btn">
+<i class="fa fa-plus"></i> Add Request
+</button>
+
+<table id="maintenanceTable">
+
+<thead>
 
 <tr>
-<th>Request ID</th>
+<th>ID</th>
 <th>Room</th>
 <th>Issue</th>
 <th>Date</th>
 <th>Status</th>
 </tr>
 
-<tr>
-<td>1</td>
-<td>101</td>
-<td>Fan not working</td>
-<td>10-03-2026</td>
-<td>Pending</td>
-</tr>
+</thead>
 
-<tr>
-<td>2</td>
-<td>204</td>
-<td>Water leakage</td>
-<td>09-03-2026</td>
-<td>In Progress</td>
-</tr>
-
-<tr>
-<td>3</td>
-<td>110</td>
-<td>Light not working</td>
-<td>08-03-2026</td>
-<td>Completed</td>
-</tr>
+<tbody id="maintenanceBody"></tbody>
 
 </table>
 
 </div>
+
+<script>
+
+async function loadMaintenance(){
+
+const res = await fetch("http://localhost:5000/maintenance")
+
+const data = await res.json()
+
+let table = document.getElementById("maintenanceBody")
+
+table.innerHTML = ""
+
+data.forEach(m=>{
+
+table.innerHTML += `
+<tr>
+<td>${m.request_id}</td>
+<td>${m.room_id}</td>
+<td>${m.issue}</td>
+<td>${m.request_date}</td>
+<td>${m.status}</td>
+</tr>
+`
+
+})
+
+}
+
+loadMaintenance()
+
+</script>
 
 </body>
 </html>

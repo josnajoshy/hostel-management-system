@@ -151,3 +151,22 @@ border:none;
 border-radius:5px;
 cursor:pointer;
 }
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th, td{
+border:1px solid #ddd;
+padding:10px;
+text-align:left;
+}
+
+th{
+background:#f4f4f4;
+}
+
+tr:nth-child(even){
+background:#f9f9f9;
+}

@@ -131,37 +131,43 @@ app.post("/fees", (req, res) => {
    MAINTENANCE API
 ======================== */
 
-app.get("/maintenance", (req, res) => {
-  db.query("SELECT * FROM maintenance", (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json(result);
-    }
-  });
-});
+app.get("/maintenance",(req,res)=>{
 
-app.post("/maintenance", (req, res) => {
+const sql = "SELECT * FROM maintenance";
 
-  const { room_id, issue, request_date, status } = req.body;
+db.query(sql,(err,result)=>{
 
-  const sql = `
-  INSERT INTO maintenance (room_id, issue, request_date, status)
-  VALUES (?, ?, ?, ?)
-  `;
-
-  db.query(sql, [room_id, issue, request_date, status], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json({ message: "Maintenance Request Added" });
-    }
-  });
+if(err){
+console.log(err);
+res.status(500).json(err);
+}
+else{
+res.json(result);
+}
 
 });
 
+});
+
+app.post("/addMaintenance",(req,res)=>{
+
+const {room_id,issue,status} = req.body;
+
+const sql = "INSERT INTO maintenance (room_id,issue,request_date,status) VALUES (?,?,CURDATE(),?)";
+
+db.query(sql,[room_id,issue,status],(err,result)=>{
+
+if(err){
+console.log(err);
+res.status(500).json(err);
+}
+else{
+res.json({message:"Maintenance Request Added"});
+}
+
+});
+
+});
 
 /* ========================
    VISITORS API

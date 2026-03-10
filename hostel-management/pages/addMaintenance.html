@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Add Maintenance Request</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Hostel Admin</h2>
+
+<a href="../index.html"><i class="fa fa-chart-line"></i> Dashboard</a>
+<a href="students.html"><i class="fa fa-user"></i> Students</a>
+<a href="rooms.html"><i class="fa fa-bed"></i> Rooms</a>
+<a href="maintenance.html"><i class="fa fa-wrench"></i> Maintenance</a>
+<a href="visitors.html"><i class="fa fa-users"></i> Visitors</a>
+<a href="fees.html"><i class="fa fa-money-bill"></i> Fees</a>
+
+</div>
+
+
+<div class="main">
+
+<h1>Add Maintenance Request</h1>
+
+<form id="maintenanceForm">
+
+<label>Room ID</label>
+<input type="number" id="room_id" required>
+
+<label>Issue</label>
+<input type="text" id="issue" required>
+
+<label>Status</label>
+<select id="status">
+
+<option value="Pending">Pending</option>
+<option value="In Progress">In Progress</option>
+<option value="Completed">Completed</option>
+
+</select>
+
+<br><br>
+
+<button type="submit" class="add-btn">
+<i class="fa fa-save"></i> Submit Request
+</button>
+
+</form>
+
+</div>
+
+
+<script>
+
+document.getElementById("maintenanceForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+const room_id = document.getElementById("room_id").value
+const issue = document.getElementById("issue").value
+const status = document.getElementById("status").value
+
+await fetch("http://localhost:5000/addMaintenance",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+room_id,
+issue,
+status
+})
+
+})
+
+alert("Maintenance Request Added")
+
+window.location.href="maintenance.html"
+
+})
+
+</script>
+
+</body>
+</html>
