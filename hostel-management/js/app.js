@@ -1,20 +1,42 @@
-function loadStudents() {
+const API_URL = "http://localhost:5000";
+
+async function loadStudents() {
 
 let table = document.getElementById("studentTable");
+
+// clear table except header
+table.innerHTML = `
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Department</th>
+<th>Room</th>
+</tr>
+`;
+
+try {
+
+let response = await fetch(`${API_URL}/students`);
+let students = await response.json();
 
 students.forEach(student => {
 
 let row = table.insertRow();
 
-row.insertCell(0).innerHTML = student.id;
+row.insertCell(0).innerHTML = student.student_id;
 row.insertCell(1).innerHTML = student.name;
-row.insertCell(2).innerHTML = student.department;
-row.insertCell(3).innerHTML = student.room;
+row.insertCell(2).innerHTML = student.dept;
+row.insertCell(3).innerHTML = student.room_id;
 
 });
 
+} catch (error) {
+
+console.error("Error loading students:", error);
+
 }
 
+}
 
 function searchStudent() {
 
@@ -36,6 +58,51 @@ tr[i].style.display = "";
 } else {
 tr[i].style.display = "none";
 }
+
+}
+
+}
+function showAddStudentForm() {
+
+document.getElementById("studentForm").style.display = "block";
+
+}
+
+async function addStudent() {
+
+const name = document.getElementById("name").value;
+const dept = document.getElementById("dept").value;
+const phone = document.getElementById("phone").value;
+const room_id = document.getElementById("room_id").value;
+const join_date = document.getElementById("join_date").value;
+
+const student = {
+name,
+dept,
+phone,
+room_id,
+join_date
+};
+
+try {
+
+await fetch("http://localhost:5000/students", {
+
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify(student)
+
+});
+
+alert("Student Added");
+
+loadStudents();
+
+} catch (error) {
+
+console.error(error);
 
 }
 

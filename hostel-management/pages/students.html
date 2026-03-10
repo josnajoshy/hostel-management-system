@@ -2,8 +2,10 @@
 <html>
 <head>
 <title>Students</title>
+
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -29,22 +31,67 @@
 
 <table id="studentTable">
 
+<thead>
 <tr>
 <th>ID</th>
 <th>Name</th>
 <th>Department</th>
 <th>Room</th>
 </tr>
+</thead>
+
+<tbody id="studentBody">
+</tbody>
 
 </table>
 
 </div>
 
-<script src="../js/data.js"></script>
-<script src="../js/app.js"></script>
-
 <script>
-loadStudents();
+
+async function loadStudents(){
+
+const response = await fetch("http://localhost:5000/students")
+
+const students = await response.json()
+
+let table = document.getElementById("studentBody")
+
+table.innerHTML = ""
+
+students.forEach(student => {
+
+table.innerHTML += `
+<tr>
+<td>${student.id}</td>
+<td>${student.name}</td>
+<td>${student.department}</td>
+<td>${student.room}</td>
+</tr>
+`
+
+})
+
+}
+
+function searchStudent(){
+
+let input = document.getElementById("searchInput").value.toLowerCase()
+
+let rows = document.querySelectorAll("#studentTable tbody tr")
+
+rows.forEach(row => {
+
+let text = row.innerText.toLowerCase()
+
+row.style.display = text.includes(input) ? "" : "none"
+
+})
+
+}
+
+loadStudents()
+
 </script>
 
 </body>
