@@ -2,8 +2,10 @@
 <html>
 <head>
 <title>Fees</title>
+
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -21,39 +23,111 @@
 
 </div>
 
+
 <div class="main">
 
 <h1>Fee Management</h1>
 
+<a href="addFees.html">
+<button class="add-btn">
+<i class="fa fa-plus"></i> Update Fee
+</button>
+</a>
+
 <table>
 
+<thead>
+
 <tr>
-<th>Student ID</th>
-<th>Name</th>
+<th>ID</th>
+<th>Student</th>
 <th>Amount</th>
-<th>Status</th>
 <th>Payment Date</th>
+<th>Status</th>
 </tr>
 
-<tr>
-<td>101</td>
-<td>Rahul</td>
-<td>₹5000</td>
-<td class="status-paid">Paid</td>
-<td>01-03-2026</td>
-</tr>
+</thead>
 
-<tr>
-<td>102</td>
-<td>Arjun</td>
-<td>₹5000</td>
-<td class="status-pending">Pending</td>
-<td>-</td>
-</tr>
+<tbody id="feeBody"></tbody>
 
 </table>
 
 </div>
+
+
+<script>
+
+async function loadFees(){
+
+const res = await fetch("http://localhost:5000/fees")
+
+const data = await res.json()
+
+let table = ""
+
+data.forEach(f => {
+
+table += `
+<tr>
+
+<td>${f.fee_id || "-"}</td>
+
+<td>${f.student_name}</td>
+
+<td>${f.amount || "-"}</td>
+
+<td>${f.payment_date || "-"}</td>
+
+<td>
+
+<select onchange="updateFee(${f.fee_id || 0},this.value)">
+
+<option value="Pending" ${f.status=="Pending"?"selected":""}>
+Pending
+</option>
+
+<option value="Paid" ${f.status=="Paid"?"selected":""}>
+Paid
+</option>
+
+</select>
+
+</td>
+
+</tr>
+`
+
+})
+
+document.getElementById("feeBody").innerHTML = table
+
+}
+
+loadFees()
+
+
+async function updateFee(id,status){
+
+if(id === 0){
+alert("Please add a fee record first")
+return
+}
+
+await fetch(`http://localhost:5000/updateFee/${id}`,{
+
+method:"PUT",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({status:status})
+
+})
+
+}
+
+</script>
 
 </body>
 </html>

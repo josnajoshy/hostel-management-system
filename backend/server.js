@@ -96,36 +96,75 @@ app.get("/rooms", (req, res) => {
 ======================== */
 
 app.get("/fees", (req, res) => {
-  db.query("SELECT * FROM fees", (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json(result);
-    }
-  });
-});
 
+const sql = `
+SELECT 
+students.student_id,
+students.name AS student_name,
+fees.fee_id,
+fees.amount,
+fees.payment_date,
+COALESCE(fees.status,'Pending') AS status
+FROM students
+LEFT JOIN fees
+ON students.student_id = fees.student_id
+`;
+
+db.query(sql,(err,result)=>{
+
+if(err){
+console.log(err)
+res.status(500).json(err)
+}
+else{
+res.json(result)
+}
+
+})
+
+})
 app.post("/fees", (req, res) => {
 
-  const { student_id, amount, payment_date, status } = req.body;
+const { student_id, amount, payment_date, status } = req.body;
 
-  const sql = `
-  INSERT INTO fees (student_id, amount, payment_date, status)
-  VALUES (?, ?, ?, ?)
-  `;
+const sql = `
+INSERT INTO fees (student_id, amount, payment_date, status)
+VALUES (?, ?, ?, ?)
+`;
 
-  db.query(sql, [student_id, amount, payment_date, status], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json({ message: "Fee Record Added" });
-    }
-  });
+db.query(sql, [student_id, amount, payment_date, status], (err, result) => {
+
+if (err) {
+console.error(err);
+res.status(500).json(err);
+}
+else {
+res.json({ message: "Fee Record Added" });
+}
 
 });
 
+});
+app.put("/updateFee/:id",(req,res)=>{
+
+const id = req.params.id
+const {status} = req.body
+
+const sql = "UPDATE fees SET status=? WHERE fee_id=?"
+
+db.query(sql,[status,id],(err,result)=>{
+
+if(err){
+console.log(err)
+res.send(err)
+}
+else{
+res.json({message:"Fee Updated"})
+}
+
+})
+
+})
 
 /* ========================
    MAINTENANCE API

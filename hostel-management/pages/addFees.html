@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Fee</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+<div class="main">
+
+<h1>Update Fee Record</h1>
+
+<form id="feeForm">
+
+<label>Student</label>
+<select id="student_id" required>
+<option value="">Select Student</option>
+</select>
+
+<br><br>
+
+<label>Amount</label>
+<input type="number" id="amount" required>
+
+<br><br>
+
+<label>Payment Date</label>
+<input type="date" id="payment_date" required>
+
+<br><br>
+
+<label>Status</label>
+<select id="status">
+<option value="Pending">Pending</option>
+<option value="Paid">Paid</option>
+</select>
+
+<br><br>
+
+<button type="submit">Save Fee</button>
+
+</form>
+
+</div>
+
+<script>
+
+// LOAD STUDENTS INTO DROPDOWN
+async function loadStudents(){
+
+const res = await fetch("http://localhost:5000/students")
+
+const students = await res.json()
+
+let options = `<option value="">Select Student</option>`
+
+students.forEach(s => {
+
+options += `<option value="${s.student_id}">${s.name}</option>`
+
+})
+
+document.getElementById("student_id").innerHTML = options
+
+}
+
+loadStudents()
+
+
+// SUBMIT FEE FORM
+document.getElementById("feeForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+const data = {
+
+student_id: document.getElementById("student_id").value,
+amount: document.getElementById("amount").value,
+payment_date: document.getElementById("payment_date").value,
+status: document.getElementById("status").value
+
+}
+
+await fetch("http://localhost:5000/fees",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(data)
+
+})
+
+alert("Fee Record Added")
+
+window.location.href="fees.html"
+
+})
+
+</script>
+
+</body>
+</html>
