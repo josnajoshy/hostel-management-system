@@ -36,7 +36,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <table id="maintenanceTable">
 
 <thead>
-
 <tr>
 <th>ID</th>
 <th>Room</th>
@@ -44,7 +43,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <th>Date</th>
 <th>Status</th>
 </tr>
-
 </thead>
 
 <tbody id="maintenanceBody"></tbody>
@@ -58,30 +56,68 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 async function loadMaintenance(){
 
 const res = await fetch("http://localhost:5000/maintenance")
-
 const data = await res.json()
 
-let table = document.getElementById("maintenanceBody")
+let table = ""
 
-table.innerHTML = ""
+data.forEach(m => {
 
-data.forEach(m=>{
-
-table.innerHTML += `
+table += `
 <tr>
+
 <td>${m.request_id}</td>
+
 <td>${m.room_id}</td>
+
 <td>${m.issue}</td>
+
 <td>${m.request_date}</td>
-<td>${m.status}</td>
+
+<td>
+<select onchange="updateStatus(${m.request_id}, this.value)">
+
+<option value="Pending" ${m.status=="Pending"?"selected":""}>
+Pending
+</option>
+
+<option value="In Progress" ${m.status=="In Progress"?"selected":""}>
+In Progress
+</option>
+
+<option value="Completed" ${m.status=="Completed"?"selected":""}>
+Completed
+</option>
+
+</select>
+</td>
+
 </tr>
 `
 
 })
 
+document.getElementById("maintenanceBody").innerHTML = table
+
 }
 
 loadMaintenance()
+
+
+async function updateStatus(id,status){
+
+await fetch(`http://localhost:5000/updateMaintenance/${id}`,{
+
+method:"PUT",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({status:status})
+
+})
+
+}
 
 </script>
 

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Add Visitor</title>
+
+<link rel="stylesheet" href="../css/style.css">
+
+</head>
+
+<body>
+
+<div class="main">
+
+<h1>Add Visitor</h1>
+
+<form id="visitorForm">
+
+<input type="text" id="visitor_name" placeholder="Visitor Name" required>
+
+<label>Select Student</label>
+<input type="text" id="student_name" placeholder="Enter Student Name" required>
+
+<input type="text" id="relation" placeholder="Relation" required>
+
+<label>Enter Visit Date</label>
+<input type="date" id="visit_date" required>
+
+<button type="submit">Add Visitor</button>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("visitorForm").addEventListener("submit", async (e) => {
+
+e.preventDefault()
+
+const visitor = {
+
+visitor_name: document.getElementById("visitor_name").value,
+student_name: document.getElementById("student_name").value,
+relation: document.getElementById("relation").value,
+visit_date: document.getElementById("visit_date").value
+
+}
+
+await fetch("http://localhost:5000/addVisitor",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(visitor)
+
+})
+
+alert("Visitor Added")
+
+window.location.href="visitors.html"
+
+})
+</script>
+
+</body>
+</html>

@@ -2,8 +2,11 @@
 <html>
 <head>
 <title>Visitors</title>
+
 <link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -23,40 +26,63 @@
 
 <div class="main">
 
-<h1>Visitor Log</h1>
+<h1>Visitors</h1>
+
+<button onclick="location.href='addVisitor.html'" class="add-btn">
+<i class="fa fa-plus"></i> Add Visitor
+</button>
 
 <table>
 
+<thead>
 <tr>
-<th>Visitor Name</th>
+<th>ID</th>
+<th>Name</th>
 <th>Student</th>
-<th>Room</th>
+<th>Relation</th>
 <th>Date</th>
-<th>Time In</th>
-<th>Time Out</th>
 </tr>
+</thead>
 
-<tr>
-<td>Rajesh</td>
-<td>Rahul</td>
-<td>204</td>
-<td>10-03-2026</td>
-<td>5:00 PM</td>
-<td>7:00 PM</td>
-</tr>
-
-<tr>
-<td>Suresh</td>
-<td>Arjun</td>
-<td>105</td>
-<td>09-03-2026</td>
-<td>4:30 PM</td>
-<td>6:00 PM</td>
-</tr>
+<tbody id="visitorBody"></tbody>
 
 </table>
 
 </div>
+
+<script>
+
+async function loadVisitors(){
+
+const res=await fetch("http://localhost:5000/visitors")
+
+const data=await res.json()
+
+let table=""
+
+data.forEach(v=>{
+
+table+=`
+<tr>
+
+<td>${v.visitor_id}</td>
+<td>${v.visitor_name}</td>
+<td>${v.student_id}</td>
+<td>${v.relation}</td>
+<td>${v.visit_date}</td>
+
+</tr>
+`
+
+})
+
+document.getElementById("visitorBody").innerHTML=table
+
+}
+
+loadVisitors()
+
+</script>
 
 </body>
 </html>

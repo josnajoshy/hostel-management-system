@@ -168,41 +168,77 @@ res.json({message:"Maintenance Request Added"});
 });
 
 });
+app.put("/updateMaintenance/:id",(req,res)=>{
+
+const id = req.params.id
+const {status} = req.body
+
+const sql = "UPDATE maintenance SET status=? WHERE request_id=?"
+
+db.query(sql,[status,id],(err,result)=>{
+
+if(err){
+console.log(err)
+res.send(err)
+}
+else{
+res.json({message:"Status Updated"})
+}
+
+})
+
+})
 
 /* ========================
    VISITORS API
 ======================== */
+app.get("/visitors",(req,res)=>{
 
-app.get("/visitors", (req, res) => {
-  db.query("SELECT * FROM visitors", (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json(result);
-    }
-  });
-});
+const sql="SELECT * FROM visitors"
 
-app.post("/visitors", (req, res) => {
+db.query(sql,(err,result)=>{
 
-  const { visitor_name, student_id, visit_date, relation } = req.body;
+if(err){
+res.send(err)
+}
+else{
+res.json(result)
+}
 
-  const sql = `
-  INSERT INTO visitors (visitor_name, student_id, visit_date, relation)
-  VALUES (?, ?, ?, ?)
-  `;
+})
 
-  db.query(sql, [visitor_name, student_id, visit_date, relation], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json({ message: "Visitor Added" });
-    }
-  });
+})
 
-});
+app.post("/addVisitor",(req,res)=>{
+
+const {visitor_name, student_name, relation, visit_date} = req.body
+
+// find student id using name
+const findStudent = "SELECT student_id FROM students WHERE name=?"
+
+db.query(findStudent,[student_name],(err,result)=>{
+
+if(err) return res.send(err)
+
+if(result.length===0){
+return res.send("Student not found")
+}
+
+const student_id = result[0].student_id
+
+const sql = "INSERT INTO visitors(visitor_name,student_id,relation,visit_date) VALUES(?,?,?,?)"
+
+db.query(sql,[visitor_name,student_id,relation,visit_date],(err,data)=>{
+
+if(err) return res.send(err)
+
+res.json({message:"Visitor Added"})
+
+})
+
+})
+
+})
 
 
 /* ========================
