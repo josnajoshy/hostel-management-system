@@ -28,12 +28,15 @@
 
 <h1>Fee Management</h1>
 
+<button onclick="resetFees()" class="add-btn">
+<i class="fa fa-arrows-rotate"></i> Reset Fees
+</button>
+
 <a href="addFees.html">
 <button class="add-btn">
-<i class="fa fa-plus"></i> Update Fee
+<i class="fa fa-plus"></i> Add Fee
 </button>
 </a>
-
 <table>
 
 <thead>
@@ -74,7 +77,7 @@ table += `
 
 <td>${f.student_name}</td>
 
-<td>${f.amount || "-"}</td>
+<td>${f.amount || 5000}</td>
 
 <td>${f.payment_date || "-"}</td>
 
@@ -124,6 +127,17 @@ headers:{
 body:JSON.stringify({status:status})
 
 })
+
+}
+async function resetFees(){
+
+await fetch("http://localhost:5000/resetFees",{
+method:"PUT"
+})
+
+alert("All fees reset to Pending")
+
+loadFees()
 
 }
 

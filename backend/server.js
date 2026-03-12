@@ -22,10 +22,6 @@ app.get("/", (req, res) => {
 });
 
 
-/* ========================
-   STUDENTS API
-======================== */
-
 // Get all students
 app.get("/students", (req, res) => {
   db.query("SELECT * FROM students", (err, result) => {
@@ -39,21 +35,51 @@ app.get("/students", (req, res) => {
 });
 
 // Add student
-app.post("/addStudent",(req,res)=>{
+app.post("/students",(req,res)=>{
 
 const {name,dept,phone,room_id} = req.body;
 
-const sql = "INSERT INTO students (name,dept,phone,room_id,join_date) VALUES (?,?,?,?,CURDATE())";
+const insertStudent = `
+INSERT INTO students (name,dept,phone,room_id,join_date)
+VALUES (?,?,?,?,CURDATE())
+`;
 
-db.query(sql,[name,dept,phone,room_id],(err,result)=>{
+db.query(insertStudent,[name,dept,phone,room_id],(err,result)=>{
 
 if(err){
 console.log(err);
-res.send(err);
+return res.status(500).send(err);
 }
-else{
-res.json({message:"Student Added"});
-}
+
+/* update room occupancy */
+
+const updateRoom = `
+UPDATE rooms
+SET occupied = occupied + 1
+WHERE room_id = ?
+`;
+
+db.query(updateRoom,[room_id],(err)=>{
+if(err) console.log(err);
+});
+
+/* update room status */
+
+const updateStatus = `
+UPDATE rooms
+SET status =
+CASE
+WHEN occupied >= capacity THEN 'Full'
+ELSE 'Available'
+END
+WHERE room_id = ?
+`;
+
+db.query(updateStatus,[room_id],(err)=>{
+if(err) console.log(err);
+});
+
+res.json({message:"Student Added Successfully"});
 
 });
 
@@ -80,15 +106,21 @@ app.delete("/students/:id", (req, res) => {
 ======================== */
 
 app.get("/rooms", (req, res) => {
-  db.query("SELECT * FROM rooms", (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json(err);
-    } else {
-      res.json(result);
-    }
-  });
+
+db.query("SELECT * FROM rooms", (err, result) => {
+
+if (err) {
+console.error(err);
+res.status(500).json(err);
+} 
+else {
+res.json(result);
+}
+
 });
+
+});
+
 
 
 /* ========================
@@ -160,6 +192,27 @@ res.send(err)
 }
 else{
 res.json({message:"Fee Updated"})
+}
+
+})
+
+})
+app.put("/resetFees",(req,res)=>{
+
+const sql = `
+UPDATE fees
+SET status = 'Pending',
+payment_date = NULL
+`;
+
+db.query(sql,(err,result)=>{
+
+if(err){
+console.log(err)
+res.status(500).send(err)
+}
+else{
+res.json({message:"Fees Reset Successfully"})
 }
 
 })

@@ -13,6 +13,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 <body>
 
+<!-- Sidebar -->
+
 <div class="sidebar">
 
 <h2>Hostel Admin</h2>
@@ -27,6 +29,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 </div>
 
 
+<!-- Main Content -->
+
 <div class="main">
 
 <h1>Add Student</h1>
@@ -40,13 +44,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <input type="text" id="dept" required>
 
 <label>Phone</label>
-<input type="text" id="phone">
+<input type="text" id="phone" required>
 
 <label>Room ID</label>
-<input type="number" id="room_id">
+<input type="number" id="room_id" required>
 
 <label>Join Date</label>
-<input type="date" id="join_date">
+<input type="date" id="join_date" required>
 
 <br><br>
 
@@ -58,6 +62,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 
 </div>
 
+
+<!-- JavaScript -->
 
 <script>
 
@@ -71,7 +77,9 @@ const phone = document.getElementById("phone").value
 const room_id = document.getElementById("room_id").value
 const join_date = document.getElementById("join_date").value
 
-await fetch("http://localhost:5000/addStudent",{
+try{
+
+const response = await fetch("http://localhost:5000/students",{
 
 method:"POST",
 
@@ -89,9 +97,24 @@ join_date
 
 })
 
+if(response.ok){
+
 alert("Student Added Successfully")
 
 window.location.href="students.html"
+
+}else{
+
+alert("Failed to add student")
+
+}
+
+}catch(error){
+
+console.error("Error:",error)
+alert("Server connection error")
+
+}
 
 })
 

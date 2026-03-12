@@ -4,9 +4,12 @@ const API_URL = "http://localhost:5000";
 
 async function loadStudents() {
 
-let table = document.getElementById("studentTable");
+const table = document.getElementById("studentTable");
+
+if(!table) return;
 
 /* Reset table header */
+
 table.innerHTML = `
 <tr>
 <th>ID</th>
@@ -18,17 +21,17 @@ table.innerHTML = `
 
 try {
 
-let response = await fetch(`${API_URL}/students`);
-let students = await response.json();
+const response = await fetch(`${API_URL}/students`);
+const students = await response.json();
 
 students.forEach(student => {
 
 let row = table.insertRow();
 
-row.insertCell(0).innerHTML = student.student_id;
-row.insertCell(1).innerHTML = student.name;
-row.insertCell(2).innerHTML = student.dept;
-row.insertCell(3).innerHTML = student.room_id;
+row.insertCell(0).innerText = student.student_id;
+row.insertCell(1).innerText = student.name;
+row.insertCell(2).innerText = student.dept;
+row.insertCell(3).innerText = student.room_id;
 
 });
 
@@ -40,11 +43,14 @@ console.error("Error loading students:", error);
 
 }
 
+
 /* ================= SEARCH STUDENT ================= */
 
 function searchStudent() {
 
 let input = document.getElementById("searchInput");
+if(!input) return;
+
 let filter = input.value.toLowerCase();
 let table = document.getElementById("studentTable");
 let tr = table.getElementsByTagName("tr");
@@ -57,11 +63,8 @@ if (td) {
 
 let textValue = td.textContent || td.innerText;
 
-if (textValue.toLowerCase().indexOf(filter) > -1) {
-tr[i].style.display = "";
-} else {
-tr[i].style.display = "none";
-}
+tr[i].style.display =
+textValue.toLowerCase().includes(filter) ? "" : "none";
 
 }
 
@@ -69,13 +72,6 @@ tr[i].style.display = "none";
 
 }
 
-/* ================= SHOW ADD STUDENT FORM ================= */
-
-function showAddStudentForm() {
-
-document.getElementById("studentForm").style.display = "block";
-
-}
 
 /* ================= ADD STUDENT ================= */
 
@@ -97,7 +93,7 @@ join_date
 
 try {
 
-await fetch(`${API_URL}/students`, {
+const response = await fetch(`${API_URL}/students`, {
 
 method: "POST",
 
@@ -109,9 +105,16 @@ body: JSON.stringify(student)
 
 });
 
-alert("Student Added Successfully");
+if(response.ok){
 
+alert("Student Added Successfully");
 loadStudents();
+
+}else{
+
+alert("Failed to add student");
+
+}
 
 } catch (error) {
 
@@ -121,7 +124,7 @@ console.error("Error adding student:", error);
 
 }
 
+
 /* ================= AUTO LOAD DATA ================= */
 
 window.onload = loadStudents;
-

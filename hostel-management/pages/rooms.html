@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <title>Rooms</title>
+
 <link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
+
+<!-- Sidebar -->
 
 <div class="sidebar">
 
@@ -21,47 +29,33 @@
 
 </div>
 
+
+<!-- Main Content -->
+
 <div class="main">
 
 <h1>Room Management</h1>
 
-<table>
+<table id="roomTable">
 
 <tr>
-<th>Room Number</th>
-<th>Block</th>
+<th>Room ID</th>
+<th>Type</th>
 <th>Capacity</th>
 <th>Occupied</th>
+<th>Rent</th>
 <th>Status</th>
-</tr>
-
-<tr>
-<td>101</td>
-<td>A</td>
-<td>3</td>
-<td>2</td>
-<td>Available</td>
-</tr>
-
-<tr>
-<td>102</td>
-<td>A</td>
-<td>3</td>
-<td>3</td>
-<td>Full</td>
-</tr>
-
-<tr>
-<td>201</td>
-<td>B</td>
-<td>2</td>
-<td>1</td>
-<td>Available</td>
 </tr>
 
 </table>
 
 </div>
 
+
+<!-- Load Room Script -->
+
+<script src="../js/room.js"></script>
+
 </body>
+
 </html>

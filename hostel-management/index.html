@@ -69,7 +69,7 @@ async function loadDashboard(){
 
 try{
 
-/* Load students */
+/* Total Students */
 
 const studentRes = await fetch("http://localhost:5000/students")
 const students = await studentRes.json()
@@ -77,14 +77,34 @@ const students = await studentRes.json()
 document.getElementById("totalStudents").innerText = students.length
 
 
-/* Load maintenance */
+/* Available Rooms */
+
+const roomRes = await fetch("http://localhost:5000/rooms")
+const rooms = await roomRes.json()
+
+const available = rooms.filter(r => r.status === "Available")
+
+document.getElementById("availableRooms").innerText = available.length
+
+
+/* Maintenance */
 
 const maintenanceRes = await fetch("http://localhost:5000/maintenance")
 const maintenance = await maintenanceRes.json()
 
-const pending = maintenance.filter(m => m.status === "Pending")
+const pendingMaintenance = maintenance.filter(m => m.status === "Pending")
 
-document.getElementById("maintenanceCount").innerText = pending.length
+document.getElementById("maintenanceCount").innerText = pendingMaintenance.length
+
+
+/* Fees Pending */
+
+const feesRes = await fetch("http://localhost:5000/fees")
+const fees = await feesRes.json()
+
+const pendingFees = fees.filter(f => f.status === "Pending")
+
+document.getElementById("feesPending").innerText = pendingFees.length
 
 
 }catch(err){
